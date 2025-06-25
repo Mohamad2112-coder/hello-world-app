@@ -1,5 +1,9 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'node:16'
+        }
+    }
 
     environment {
         DOCKERHUB_USERNAME = 'mohamad456'
@@ -20,9 +24,7 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                script {
-                    sh "docker build -t ${DOCKERHUB_USERNAME}/hello-world-app:latest ."
-                }
+                sh "docker build -t ${DOCKERHUB_USERNAME}/hello-world-app:latest ."
             }
         }
 
@@ -35,10 +37,8 @@ pipeline {
                         passwordVariable: 'DOCKER_PASS'
                     )
                 ]) {
-                    script {
-                        sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
-                        sh "docker push ${DOCKERHUB_USERNAME}/hello-world-app:latest"
-                    }
+                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                    sh "docker push ${DOCKERHUB_USERNAME}/hello-world-app:latest"
                 }
             }
         }
