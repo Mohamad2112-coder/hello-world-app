@@ -26,9 +26,20 @@ pipeline {
 
         stage('Push to Docker Hub') {
             steps {
-                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
-                sh 'docker push mohamad456/hello-world-app'
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'dockerhub-creds',
+                        usernameVariable: 'DOCKER_USER',
+                        passwordVariable: 'DOCKER_PASS'
+                    )
+                ]) {
+                    script {
+                        docker.withRegistry('https://index.docker.io/v1/', 'sc-a-docker-creds') {
+                            docker.image(IMAGE_NAME).push('latest')
+                        }
+                    }
+                }
             }
-        }
-    }
+        }
+    }
 }
