@@ -1,9 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'node:16'
-        }
-    }
+    agent any
 
     environment {
         DOCKERHUB_USERNAME = 'mohamad456'
@@ -12,7 +8,7 @@ pipeline {
     stages {
         stage('Clone Repo') {
             steps {
-                git branch: 'main', url: 'https://github.com/Mohamad2112-coder/hello-world-app.git'
+                git branch: 'main', url: 'https://github.com/Mohamad2112-coder/hello-world-app'
             }
         }
 
