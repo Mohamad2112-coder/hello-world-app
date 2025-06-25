@@ -14,13 +14,13 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh 'docker run --rm -v "$PWD":/app -w /app node:16 npm install'
+                bat 'npm install'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh "docker build -t ${DOCKERHUB_USERNAME}/hello-world-app:latest ."
+                bat "docker build -t %DOCKERHUB_USERNAME%/hello-world-app:latest ."
             }
         }
 
@@ -33,8 +33,8 @@ pipeline {
                         passwordVariable: 'DOCKER_PASS'
                     )
                 ]) {
-                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
-                    sh "docker push ${DOCKERHUB_USERNAME}/hello-world-app:latest"
+                    bat 'echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin'
+                    bat "docker push %DOCKERHUB_USERNAME%/hello-world-app:latest"
                 }
             }
         }
