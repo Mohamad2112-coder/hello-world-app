@@ -2,13 +2,13 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds')
+        DOCKERHUB_USERNAME = 'mohamad456'
     }
 
     stages {
         stage('Clone Repo') {
             steps {
-                git 'https://github.com/Mohamad2112-coder/hello-world-app.git'
+                git branch: 'main', url: 'https://github.com/Mohamad2112-coder/hello-world-app.git'
             }
         }
 
@@ -20,7 +20,9 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t mohamad456/hello-world-app .'
+                script {
+                    sh "docker build -t ${DOCKERHUB_USERNAME}/hello-world-app:latest ."
+                }
             }
         }
 
@@ -34,12 +36,11 @@ pipeline {
                     )
                 ]) {
                     script {
-                        docker.withRegistry('https://index.docker.io/v1/', 'sc-a-docker-creds') {
-                            docker.image(IMAGE_NAME).push('latest')
-                        }
+                        sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                        sh "docker push ${DOCKERHUB_USERNAME}/hello-world-app:latest"
                     }
                 }
             }
-        }
-    }
+        }
+    }
 }
